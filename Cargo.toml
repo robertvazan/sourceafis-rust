@@ -1,0 +1,7 @@
+[package]
+name = "sourceafis"
+version = "0.1.0"
+authors = ["Robert Važan"]
+edition = "2018"
+
+[dependencies]
