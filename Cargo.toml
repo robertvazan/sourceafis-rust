@@ -3,5 +3,12 @@ name = "sourceafis"
 version = "0.1.0"
 authors = ["Robert Važan"]
 edition = "2018"
+description = "Fingerprint recognition engine that takes a pair of human fingerprint images and returns their similarity score. Supports efficient 1:N search."
+readme = "README.md"
+homepage = "https://sourceafis.machinezoo.com/rust"
+repository = "https://github.com/robertvazan/sourceafis-rust"
+license = "Apache-2.0"
+keywords = ["biometrics", "fingerprint-matching", "fingerprints", "fingerprint", "authentication"]
+categories = ["authentication", "science", "graphics"]
 
 [dependencies]

@@ -1,3 +1,4 @@
+// Part of SourceAFIS for Rust: https://sourceafis.machinezoo.com/rust
 #[cfg(test)]
 mod tests {
     #[test]
