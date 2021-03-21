@@ -1,10 +1,11 @@
 // Part of SourceAFIS for Rust: https://sourceafis.machinezoo.com/rust
 
-mod double_point;
-mod int_point;
-mod integers;
+mod number;
+mod point;
 
-pub(crate) use double_point::DoublePoint;
+pub(crate) use point::DoublePoint;
+pub(crate) use point::IntPoint;
+pub(crate) use point::Point;
 
 #[cfg(test)]
 mod test_utils {

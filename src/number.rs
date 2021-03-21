@@ -1,6 +1,8 @@
 // Part of SourceAFIS for Rust: https://sourceafis.machinezoo.com/rust
 
-pub fn sq(value: i32) -> i32 {
+use std::ops::Mul;
+
+pub fn sq<T: Mul<Output = T> + Copy>(value: T) -> T {
     value * value
 }
 pub fn round_up_div(dividend: i32, divisor: i32) -> i32 {
