@@ -1,10 +1,10 @@
 // Part of SourceAFIS for Rust: https://sourceafis.machinezoo.com/rust
 
-fn sq(value: i32) -> i32 {
-    return value * value;
+pub fn sq(value: i32) -> i32 {
+    value * value
 }
-fn round_up_div(dividend: i32, divisor: i32) -> i32 {
-    return (dividend + divisor - 1) / divisor;
+pub fn round_up_div(dividend: i32, divisor: i32) -> i32 {
+    (dividend + divisor - 1) / divisor
 }
 
 #[cfg(test)]
