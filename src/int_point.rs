@@ -1,10 +1,10 @@
 // Part of SourceAFIS for Rust: https://sourceafis.machinezoo.com/rust
 
 use super::*;
+use std::cmp::Ordering;
 use std::ops::Add;
 use std::ops::Neg;
 use std::ops::Sub;
-use std::cmp::Ordering;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct IntPoint {
@@ -93,7 +93,7 @@ impl IntoIterator for IntPoint {
 }
 
 impl IntPoint {
-    const ZERO: IntPoint = Self::new(0, 0);
+    const ZERO: Self = Self::new(0, 0);
     const EDGE_NEIGHBORS: [IntPoint; 4] = [
         Self::new(0, -1),
         Self::new(-1, 0),
@@ -101,18 +101,18 @@ impl IntPoint {
         Self::new(0, 1),
     ];
     const CORNER_NEIGHBORS: [IntPoint; 8] = [
-        IntPoint::new(-1, -1),
-        IntPoint::new(0, -1),
-        IntPoint::new(1, -1),
-        IntPoint::new(-1, 0),
-        IntPoint::new(1, 0),
-        IntPoint::new(-1, 1),
-        IntPoint::new(0, 1),
-        IntPoint::new(1, 1),
+        Self::new(-1, -1),
+        Self::new(0, -1),
+        Self::new(1, -1),
+        Self::new(-1, 0),
+        Self::new(1, 0),
+        Self::new(-1, 1),
+        Self::new(0, 1),
+        Self::new(1, 1),
     ];
 
     pub const fn new(x: i32, y: i32) -> Self {
-        IntPoint { x, y }
+        Self { x, y }
     }
     pub fn area(self) -> i32 {
         self.x * self.y
@@ -125,6 +125,44 @@ impl IntPoint {
     }
     pub fn to_double_point(self) -> DoublePoint {
         DoublePoint::new(self.x as f64, self.y as f64)
+    }
+    fn line_to(self, to: Self) -> Vec<Self> {
+        let relative = to - self;
+        if relative.x.abs() >= relative.y.abs() {
+            let mut result = vec![Self::ZERO; relative.x.abs() as usize + 1];
+            let slope = relative.y as f64 / (relative.x as f64);
+            if relative.x > 0 {
+                for i in 0..=relative.x {
+                    result[i as usize] =
+                        Self::new(self.x + i, self.y + (i as f64 * slope).round() as i32);
+                }
+            } else if relative.x < 0 {
+                for i in 0..=-relative.x {
+                    result[i as usize] =
+                        Self::new(self.x - i, self.y - (i as f64 * slope).round() as i32);
+                }
+            } else {
+                result[0] = self;
+            }
+            return result;
+        } else {
+            let mut result = vec![Self::ZERO; relative.y.abs() as usize + 1];
+            let slope = relative.x as f64 / (relative.y as f64);
+            if relative.y > 0 {
+                for i in 0..=relative.y {
+                    result[i as usize] =
+                        Self::new(self.x + (i as f64 * slope).round() as i32, self.y + i);
+                }
+            } else if relative.y < 0 {
+                for i in 0..=-relative.y {
+                    result[i as usize] =
+                        Self::new(self.x - (i as f64 * slope).round() as i32, self.y - i);
+                }
+            } else {
+                result[0] = self;
+            }
+            return result;
+        }
     }
 }
 
@@ -186,9 +224,13 @@ mod tests {
         assert_eq!(IntPoint::new(-2, -3), -IntPoint::new(2, 3));
     }
     #[test]
-	fn test_to_double_point() {
-		double_point::assert_eq(DoublePoint::new(2.0, 3.0), IntPoint::new(2, 3).to_double_point(), 0.001);
-	}
+    fn test_to_double_point() {
+        double_point::assert_eq(
+            DoublePoint::new(2.0, 3.0),
+            IntPoint::new(2, 3).to_double_point(),
+            0.001,
+        );
+    }
     #[test]
     fn test_eq() {
         assert!(IntPoint::new(2, 3) == IntPoint::new(2, 3));
@@ -234,23 +276,49 @@ mod tests {
         assert_eq!(8, s.len());
     }
     #[test]
-	fn test_iter() {
-		let mut l = Vec::new();
-		for p in IntPoint::new(2, 3) {
-			l.push(p);
+    fn test_iter() {
+        let mut l = Vec::new();
+        for p in IntPoint::new(2, 3) {
+            l.push(p);
         }
-		assert_eq!(l, [IntPoint::new(0, 0), IntPoint::new(1, 0), IntPoint::new(0, 1), IntPoint::new(1, 1), IntPoint::new(0, 2), IntPoint::new(1, 2)]);
-		for _ in IntPoint::new(0, 3) {
-			panic!();
+        assert_eq!(
+            l,
+            [
+                IntPoint::new(0, 0),
+                IntPoint::new(1, 0),
+                IntPoint::new(0, 1),
+                IntPoint::new(1, 1),
+                IntPoint::new(0, 2),
+                IntPoint::new(1, 2)
+            ]
+        );
+        for _ in IntPoint::new(0, 3) {
+            panic!();
         }
-		for _ in IntPoint::new(3, 0) {
-			panic!();
+        for _ in IntPoint::new(3, 0) {
+            panic!();
         }
-		for _ in IntPoint::new(-1, 3) {
-			panic!();
+        for _ in IntPoint::new(-1, 3) {
+            panic!();
         }
-		for _ in IntPoint::new(3, -1) {
-			panic!();
+        for _ in IntPoint::new(3, -1) {
+            panic!();
         }
-	}
+    }
+    #[test]
+    fn test_line_to() {
+        check_line_to(2, 3, 2, 3, &[2, 3]);
+        check_line_to(2, 3, 1, 4, &[2, 3, 1, 4]);
+        check_line_to(2, 3, -1, 3, &[2, 3, 1, 3, 0, 3, -1, 3]);
+        check_line_to(-1, 2, 0, -1, &[-1, 2, -1, 1, 0, 0, 0, -1]);
+        check_line_to(1, 1, 3, 7, &[1, 1, 1, 2, 2, 3, 2, 4, 2, 5, 3, 6, 3, 7]);
+        check_line_to(1, 3, 6, 1, &[1, 3, 2, 3, 3, 2, 4, 2, 5, 1, 6, 1]);
+    }
+    fn check_line_to(x1: i32, y1: i32, x2: i32, y2: i32, p: &[i32]) {
+        let mut l = Vec::new();
+        for i in 0..p.len() / 2 {
+            l.push(IntPoint::new(p[2 * i], p[2 * i + 1]));
+        }
+        assert_eq!(l, IntPoint::new(x1, y1).line_to(IntPoint::new(x2, y2)));
+    }
 }
