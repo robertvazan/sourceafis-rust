@@ -1,6 +1,6 @@
 # SourceAFIS for Rust #
 
-Experimental port of [SourceAFIS](https://sourceafis.machinezoo.com/) to Rust.
+Experimental port of [SourceAFIS](https://sourceafis.machinezoo.com/) to Rust. Unfinished. Do not use it yet.
 
 * Documentation: [SourceAFIS for Rust](https://sourceafis.machinezoo.com/rust), [SourceAFIS overview](https://sourceafis.machinezoo.com/), [Algorithm](https://sourceafis.machinezoo.com/algorithm)
 * Download: see [SourceAFIS for Rust](https://sourceafis.machinezoo.com/rust) page
