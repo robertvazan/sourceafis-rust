@@ -1,6 +1,6 @@
-use core::panic;
-
 // Part of SourceAFIS for Rust: https://sourceafis.machinezoo.com/rust
+
+use core::panic;
 
 pub struct FingerprintImageOptions {
     dpi: f64,
