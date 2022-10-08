@@ -1,5 +1,7 @@
 // Part of SourceAFIS for Rust: https://sourceafis.machinezoo.com/rust
 
+// TODO: This is just a scratch. Implement minimal port of extractor and matcher.
+
 mod image;
 mod number;
 mod point;
